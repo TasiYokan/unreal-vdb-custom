@@ -66,10 +66,12 @@ class VOLUMERUNTIME_API UVdbSequenceComponent : public UActorComponent, public I
 	float GetFrameIndexFloatFromElapsedTime() const;
 	uint32 GetNbFrames() const;
 	void SetElapsedTimeToStartTime();
+	float GetElapsedTime();
 	void ResetAnimationTime();
 	bool GetManualTick() const { return ManualTick; }
 	void SetManualTick(bool InManualTick);
 	void OnChunkAvailable(uint32 ChunkId);
+	bool IsStopped();
 
 
 	const class UVdbVolumeSequence* GetPrincipalSequence() const;

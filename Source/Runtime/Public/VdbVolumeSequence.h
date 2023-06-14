@@ -95,6 +95,7 @@ public:
 	float GetDurationInSeconds() const { return GetTimeBetweenFramesInSeconds() * float(FMath::Max(uint32(1), GetNbFrames()) - 1); }
 	uint32 GetFrameIndexFromTime(float InputAnimTime) const;
 	float GetFrameIndexFloatFromTime(float InputAnimTime) const;
+	uint32 GetFrameIndexFromFirstAvailableComponentTime() const;
 
 	TArray<FVdbSequenceChunk>& GetChunks() { return Chunks; }
 	uint32 GetChunkIndexFromFrameIndex(uint32 FrameIndex) const;
@@ -109,6 +110,7 @@ public:
 
 	// IInterface_StreamableVolumetricAsset
 	virtual uint32 GetNbFrames() const override { return (uint32)VolumeFramesInfos.Num(); }
+	virtual const FVolumeFrameInfos* GetFrameInfos(uint32 FrameIndex) const { return &VolumeFramesInfos[FrameIndex]; }
 	virtual uint32 GetChunkDataSize(uint32 ChunkId) const override;
 	virtual void UpdateChunksNeeded(TArray<int32>& ChunksNeeded) override;
 	virtual bool IsDataAlreadyLoaded(uint32 ChunkId) const override;
@@ -118,6 +120,9 @@ public:
 	virtual void OnChunkAvailable(uint32 ChunkId) override;
 	virtual void CopyChunkContentToMemory(uint32 ChunkId, void* ResidentChunkMemory) override;
 	virtual IBulkDataIORequest* CreateStreamingRequest(uint32 ChunkId, FBulkDataIORequestCallBack& AsyncFileCallBack) override;
+
+	// Hack: should keep it private
+	TArray<UVdbSequenceComponent*> VdbSequenceComponents;
 
 
 private:
@@ -139,5 +144,4 @@ private:
 	TUniquePtr<class FVdbRenderBufferPool> BufferPool;
 
 	FCriticalSection ComponentsLock;
-	TArray<UVdbSequenceComponent*> VdbSequenceComponents;
 };

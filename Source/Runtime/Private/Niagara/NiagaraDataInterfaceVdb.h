@@ -16,6 +16,7 @@
 
 #include "NiagaraCommon.h"
 #include "NiagaraDataInterface.h"
+#include "VectorVM.h"
 #include "NiagaraDataInterfaceVdb.generated.h"
 
 USTRUCT()
@@ -53,6 +54,38 @@ struct FVdbLevelSetHit
 	int k = 0;
 };
 
+
+// Name of all the functions available in the data interface
+static const FName InitVolumeName(TEXT("InitVolume"));
+static const FName SampleVolumeName(TEXT("SampleVolume"));
+static const FName SampleVolumeFastName(TEXT("SampleVolumeFast"));
+static const FName SampleVolumePosName(TEXT("SampleVolumePos"));
+static const FName LevelSetZeroCrossingName(TEXT("LevelSetZeroCrossing"));
+static const FName LevelSetComputeNormalName(TEXT("LevelSetComputeNormal"));
+static const FName RayClipName(TEXT("RayClip"));
+// Spaces conversions
+static const FName LocalToVdbSpaceName(TEXT("LocalToVdbSpace"));
+static const FName LocalToVdbSpacePosName(TEXT("LocalToVdbSpacePos"));
+static const FName LocalToVdbSpaceDirName(TEXT("LocalToVdbSpaceDir"));
+static const FName VdbToLocalSpaceName(TEXT("VdbToLocalSpace"));
+static const FName VdbToLocalSpacePosName(TEXT("VdbToLocalSpacePos"));
+static const FName VdbToLocalSpaceDirName(TEXT("VdbToLocalSpaceDir"));
+static const FName VdbSpaceToIjkName(TEXT("VdbSpaceToIjk"));
+static const FName IjkToVdbSpaceName(TEXT("IjkToVdbSpace"));
+// Ray operations
+static const FName RayFromStartEndName(TEXT("RayFromStartEnd"));
+static const FName RayFromStartDirName(TEXT("RayFromStartDir"));
+// Others
+static const FName GetIndexBoundsName(TEXT("GetIndexBounds"));
+static const FName GetOffsetOfBoundsName(TEXT("GetOffsetOfBounds"));
+static const FName GetSeqIndexBoundsName(TEXT("GetSeqIndexBounds"));
+static const FName GetSeqOffsetOfBoundsName(TEXT("GetSeqOffsetOfBounds"));
+static const FName GetCenterLocationName(TEXT("GetCenterLocation"));
+
+static const FString VolumeName(TEXT("Volume_"));
+static const FString IndexMinName(TEXT("IndexMin_"));
+static const FString IndexMaxName(TEXT("IndexMax_"));
+
 UCLASS(EditInlineNew, Category = "SparseVolumetrics", meta = (DisplayName = "Volume VDB"))
 class VOLUMERUNTIME_API UNiagaraDataInterfaceVdb : public UNiagaraDataInterface
 {
@@ -77,6 +110,9 @@ public:
 
 	// Returns the DI's functions signatures 
 	virtual void GetFunctions(TArray<FNiagaraFunctionSignature>& OutFunctions)override;
+	virtual void GetVMExternalFunction(const FVMExternalFunctionBindingInfo& BindingInfo, void* InstanceData, FVMExternalFunction& OutFunc) override;
+	virtual void GetIndexBoundsVM(FVectorVMExternalFunctionContext& Context);
+	virtual void GetOffsetOfBoundsVM(FVectorVMExternalFunctionContext& Context);
 	virtual bool CanExecuteOnTarget(ENiagaraSimTarget Target) const override { return Target == ENiagaraSimTarget::GPUComputeSim; }
 	virtual bool RequiresDepthBuffer() const override { return false; }
 

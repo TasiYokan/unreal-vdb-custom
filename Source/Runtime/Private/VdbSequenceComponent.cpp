@@ -106,6 +106,10 @@ void UVdbSequenceComponent::SetElapsedTimeToStartTime()
 	}
 }
 
+float UVdbSequenceComponent::GetElapsedTime() {
+	return this->ElapsedTime;
+}
+
 void UVdbSequenceComponent::OnRegister()
 {
 	Super::OnRegister();
@@ -271,8 +275,8 @@ void UVdbSequenceComponent::UpdateIndicesOfChunksToStream(TArray<uint32>& Indice
 				const uint32 NbFramesAheadToCacheFromConfigVar = (uint32)CVar_VdbSeq_NbFramesAheadToCache.GetValueOnAnyThread();
 				const uint32 MaxNbFramesToCache = FMath::Max(NbFramesBehindToCacheFromConfigVar, NbFramesAheadToCacheFromConfigVar);
 
-				const uint32 NbFramesBehindToCache = ManualTick ? MaxNbFramesToCache : NbFramesBehindToCacheFromConfigVar;
-				const uint32 NbFramesAheadToCache = ManualTick ? MaxNbFramesToCache : NbFramesAheadToCacheFromConfigVar;
+				const uint32 NbFramesBehindToCache = 2;// ManualTick ? MaxNbFramesToCache : NbFramesBehindToCacheFromConfigVar;
+				const uint32 NbFramesAheadToCache = 2;// ManualTick ? MaxNbFramesToCache : NbFramesAheadToCacheFromConfigVar;
 
 				const uint32 IndexOfLastFrame = GetNbFrames() - 1;
 
@@ -422,6 +426,10 @@ void UVdbSequenceComponent::OnChunkAvailable(uint32 ChunkId)
 			IndexOfLastDisplayedFrame = FrameIndex;
 		}
 	}
+}
+
+bool UVdbSequenceComponent::IsStopped() {
+	return CurrentPlayMode == EVolumePlayMode::Stopped;
 }
 
 #undef LOCTEXT_NAMESPACE

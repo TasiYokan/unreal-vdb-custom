@@ -62,6 +62,14 @@ float UVdbVolumeSequence::GetFrameIndexFloatFromTime(float InputAnimTime) const
 	return FrameIndexFloat;
 }
 
+uint32 UVdbVolumeSequence::GetFrameIndexFromFirstAvailableComponentTime() const {
+	for (UVdbSequenceComponent* SeqComponent : VdbSequenceComponents) {
+		if (SeqComponent->IsStopped() == false)
+			return SeqComponent->GetFrameIndexFromElapsedTime();
+	}
+	return 0;
+}
+
 uint32 UVdbVolumeSequence::GetFrameIndexFromTime(float InputAnimTime) const
 {
 	const float FrameIndexFloat = GetFrameIndexFloatFromTime(InputAnimTime);
